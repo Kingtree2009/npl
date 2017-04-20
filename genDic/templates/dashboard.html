@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>关键词字典维护</title>
+</head>
+<body>
+    <p>请输入添加/删除的关键字</p>
+
+
+    <form >
+        关键字: <input type="text" name="a" id ='a'> <br>
+        词频: <input type="text" name="b" id = 'b'> <br>
+        <p>result: <span id='result'></span></p>
+        <input id = "add" type="button" value="新增" >
+        <input id = "del" type="button" value="删除" >
+    </form>
+    <span>
+        <p>请填写详细描述信息：</p>
+        <textarea rows="10" cols="30" id = "tdetail" onsubmit="postDetail()">
+
+        </textarea>
+        <p><span><input id = "bdetail" type="button" value="提交" ></span>关键字: <span id='keywords'></span></p>
+    </span>
+    <input id = "dict" type="submit" value="加载字典" >
+    <!--<div id="dict">加载字典</div>-->
+    <p id="dict_result"></p>
+
+<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+
+      $("#add").click(function(){
+        var word = $("#a").val();
+        var wp = $("#b").val();
+        $.post("/addKeyWord/",{'word':word,'wp':wp}, function(ret){
+            $('#result').html(ret);
+        })
+      });
+
+      $("#del").click(function(){
+        var word = $("#a").val();
+        var wp = $("#b").val();
+        $.post("/delKeyWord/",{'word':word,'wp':wp}, function(ret){
+            $('#result').html(ret);
+        })
+      });
+
+
+      // 字典 dict
+      $('#dict').click(function(){
+          $.getJSON('/getDict/',function(ret){
+              //返回值 ret 在这里是一个字典
+
+            for (x in ret)
+            {
+                $('#dict_result').append(ret[x] + '<br>');
+            }
+              // 也可以用 ret['twz']
+          })
+      });
+
+      $("#bdetail").click(function(){
+        var words = $("#tdetail").val();
+        words = words.replace(/(^\s*)|(\s*$)/g,'')
+        $.post("/findKeyword/",{'words':words}, function(ret){
+            $('#keywords').html(ret);
+        })
+      });
+
+    });
+
+</script>
+</body>
+</html>
